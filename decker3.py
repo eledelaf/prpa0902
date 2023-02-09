@@ -6,7 +6,7 @@ Created on Thu Feb  9 13:26:01 2023
 @author: elenadelafuente
 """
 from multiprocessing import Process
-from multiprocessing import current_process 
+#from multiprocessing import current_process 
 from multiprocessing import Value, Array
 
 N= 8
@@ -21,12 +21,11 @@ def is_anybody_inside(critical, tid):
 
 def task(common, tid, critical): 
     a= 0
-    for i in range(100):
+    for i in range(10):
         print(f'{tid}−{i}: Non−critical Section')
         a += 1
         print(f'{tid}−{i}: End of non−critical Section') 
         critical[tid] = 1
-        
         while is_anybody_inside(critical, tid):
             critical[tid] = 0 
             print(f'{tid}−{i}: Giving up') 
@@ -44,14 +43,15 @@ def main():
     critical = Array('i', [0]*N) 
     for tid in range(N):
         lp.append(Process(target=task, args=(common, tid, critical))) 
-        print (f"Valor inicial del contador {common.value}")
-        for p in lp:
-            p.start()
-        for p in lp: 
-            p.join()
+    print (f"Valor inicial del contador {common.value}")
+    for p in lp:
+        p.start()
             
-            print (f"Valor final del contador {common.value}") 
-            print ("fin")
+    for p in lp: 
+        p.join()
+            
+    print (f"Valor final del contador {common.value}") 
+    print ("fin")
             
 if __name__ == "__main__": 
     main()
